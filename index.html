@@ -1,291 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SecureScan AI</title>
 
 <style>
-/* FIXED CENTERING (NO CORNER ZOOM) */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #0f172a, #05070d);
+  font-family: system-ui, Arial;
+  color: #e5e7eb;
+}
+
+/* FIXED CENTER (NO CORNER BUG) */
+.wrapper {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background: radial-gradient(circle at top, #141a2a, #07090f);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  color: #eaeaea;
-
-  overflow-x: hidden;
+  padding: 20px;
 }
 
-/* MAIN APP */
+/* MAIN CARD */
 .app {
-  width: 760px;
+  width: 100%;
+  max-width: 820px;
+
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 18px;
-  backdrop-filter: blur(18px);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-  padding: 26px;
+
+  padding: 24px;
+
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
 }
 
-/* HEADER */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
+/* TITLE */
+h2 {
+  margin: 0 0 10px;
 }
 
-.logo {
-  width: 26px;
-  height: 26px;
-  background: linear-gradient(135deg, #4c7dff, #8a5cff);
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-}
-
-.title {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* INPUT (90%) */
+/* INPUT */
 textarea {
-  width: 92%;
-  height: 92px;
-  display: block;
-  margin: 10px auto;
+  width: 100%;
+  height: 110px;
+
+  margin-top: 10px;
+
   background: rgba(0,0,0,0.35);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 14px;
+  border-radius: 12px;
+
   padding: 12px;
   color: white;
+
   outline: none;
+  resize: none;
 }
 
-/* BUTTON ROW */
-.row {
-  display: flex;
-  gap: 10px;
-  margin-top: 12px;
-}
-
+/* BUTTON */
 button {
-  flex: 1;
-  padding: 11px;
-  border-radius: 12px;
+  margin-top: 10px;
+  padding: 10px 14px;
+
   border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+
   cursor: pointer;
   font-weight: 500;
 }
 
-.scan { background: linear-gradient(135deg, #4c7dff, #6a5cff); color: white; }
-.guide { background: rgba(255,255,255,0.08); color: white; }
-.ai { background: rgba(255,255,255,0.06); color: white; }
-
-/* GUIDE */
-.doc {
-  display: none;
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.08);
+button:hover {
+  opacity: 0.9;
 }
 
-/* SCAN OUTPUT */
-.output {
-  margin-top: 16px;
+/* RESULT CARD */
+.card {
+  margin-top: 15px;
   padding: 14px;
-  border-radius: 14px;
+
   background: rgba(0,0,0,0.35);
   border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
 }
 
 /* AI PANEL */
-.ai-panel {
-  position: fixed;
-  right: -380px;
-  top: 0;
-  width: 340px;
-  height: 100%;
-  background: rgba(10,12,18,0.92);
-  backdrop-filter: blur(18px);
-  border-left: 1px solid rgba(255,255,255,0.08);
-  transition: 0.35s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.ai-panel.open {
-  right: 0;
-}
-
-/* AI HEADER WITH BACK BUTTON */
-.ai-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.ai {
+  margin-top: 15px;
   padding: 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  font-weight: 600;
+
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
 }
 
-.back-btn {
-  background: rgba(255,255,255,0.08);
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.back-btn:hover {
-  background: rgba(255,255,255,0.15);
-}
-
-.ai-chat {
-  flex: 1;
-  padding: 12px;
+/* CHAT BOX */
+#chat {
+  height: 180px;
   overflow-y: auto;
-  font-size: 14px;
-}
 
-/* AI INPUT */
-.ai-input {
-  display: flex;
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-.ai-input input {
-  flex: 1;
-  padding: 10px;
-  background: transparent;
-  border: none;
-  color: white;
-  outline: none;
-}
-
-/* SMALL SEND BUTTON */
-.ai-input button {
-  width: 52px;
-  font-size: 12px;
   padding: 8px;
-  background: #4c7dff;
+
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+
+  margin-bottom: 10px;
+}
+
+/* INPUT ROW */
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.row input {
+  flex: 1;
+
+  padding: 10px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+
+  background: rgba(0,0,0,0.3);
   color: white;
-  border: none;
-  cursor: pointer;
+
+  outline: none;
 }
 </style>
 </head>
 
 <body>
 
+<div class="wrapper">
 <div class="app">
 
-  <div class="header">
-    <div class="logo"></div>
-    <div class="title">SecureScan AI</div>
-  </div>
+<h2>SecureScan AI 🛡</h2>
 
-  <textarea id="input" placeholder="Paste suspicious link or text..."></textarea>
+<textarea id="input" placeholder="Paste suspicious link or message..."></textarea>
+
+<button onclick="scan()">Scan</button>
+
+<div id="out"></div>
+
+<!-- AI -->
+<div class="ai">
+  <h3>AI Security Assistant</h3>
+
+  <div id="chat"></div>
 
   <div class="row">
-    <button class="scan" onclick="scan()">Scan</button>
-    <button class="guide" onclick="toggleGuide()">Guide</button>
-    <button class="ai" onclick="toggleAI()">AI</button>
-  </div>
-
-  <div class="doc" id="doc">
-    <h3>Phishing Guide</h3>
-    <p>Watch for fake domains, Unicode spoofing, and scam links.</p>
-  </div>
-
-  <div class="output" id="out"></div>
-
-</div>
-
-<!-- AI PANEL -->
-<div class="ai-panel" id="ai">
-
-  <div class="ai-header">
-    <button class="back-btn" onclick="toggleAI()">← Back</button>
-    <span>Phishing AI</span>
-  </div>
-
-  <div class="ai-chat" id="chat"></div>
-
-  <div class="ai-input">
-    <input id="msg" placeholder="Ask..." />
+    <input id="msg" placeholder="Ask about scams..." />
     <button onclick="send()">Send</button>
   </div>
+</div>
 
+</div>
 </div>
 
 <script>
 
-/* SCANNER */
+let lastReport = "";
+
+/* SCAN FUNCTION */
 function scan() {
   const text = document.getElementById("input").value;
+
   let risk = 0;
-  let out = "";
+  let issues = [];
 
-  for (let c of text) {
-    const code = c.codePointAt(0);
-
-    const bad =
-      (code >= 0x0400 && code <= 0x04FF) ||
-      (code >= 0x0370 && code <= 0x03FF);
-
-    if (bad) {
-      out += `<span style="color:#ff4d4d;text-decoration:underline">${c}</span>`;
-      risk++;
-    } else {
-      out += c;
-    }
+  if (text.toLowerCase().includes("free")) {
+    risk += 20;
+    issues.push("Suspicious keyword: free");
   }
 
-  let level = risk === 0 ? "LOW" : risk < 3 ? "MEDIUM" : "HIGH";
+  if (text.toLowerCase().includes("nitro")) {
+    risk += 30;
+    issues.push("Fake reward scam");
+  }
 
-  document.getElementById("out").innerHTML =
-    `<b>Risk:</b> ${level}<br><br>${out}`;
+  if (/[а-яА-Я]/.test(text)) {
+    risk += 40;
+    issues.push("Unicode spoofing detected");
+  }
+
+  let level = risk < 30 ? "LOW" : risk < 70 ? "MEDIUM" : "HIGH";
+
+  lastReport = `Risk: ${risk}/100\nLevel: ${level}\nIssues: ${issues.join(", ") || "None"}`;
+
+  document.getElementById("out").innerHTML = `
+    <div class="card">
+      <b>Scan Result</b><br><br>
+      ${lastReport.replaceAll("\n","<br>")}
+    </div>
+  `;
 }
 
-/* GUIDE */
-function toggleGuide() {
-  const d = document.getElementById("doc");
-  d.style.display = d.style.display === "block" ? "none" : "block";
+/* 🧠 OFFLINE AI */
+function ai(message) {
+  const msg = message.toLowerCase();
+
+  if (lastReport.includes("HIGH")) {
+    return "⚠ HIGH RISK detected. This may be a phishing attempt.";
+  }
+
+  if (msg.includes("phishing")) {
+    return "Phishing is fake websites/messages used to steal personal data.";
+  }
+
+  if (msg.includes("nitro") || msg.includes("free")) {
+    return "Be careful — fake rewards are commonly used in scams.";
+  }
+
+  if (msg.includes("safe")) {
+    return "Always verify links, check domains, and avoid unknown pages.";
+  }
+
+  return "Ask me about scams, phishing, or suspicious links.";
 }
 
-/* AI PANEL */
-function toggleAI() {
-  document.getElementById("ai").classList.toggle("open");
-}
-
-/* AI SEND */
-async function send() {
-  const input = document.getElementById("msg");
+/* CHAT */
+function send() {
+  const msg = document.getElementById("msg").value;
   const chat = document.getElementById("chat");
 
-  const text = input.value.trim();
-  if (!text) return;
+  if (!msg) return;
 
-  chat.innerHTML += `<div>You: ${text}</div>`;
-  input.value = "";
+  chat.innerHTML += `<div><b>You:</b> ${msg}</div>`;
 
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ message: text })
-  });
+  const reply = ai(msg);
 
-  const data = await res.json();
+  chat.innerHTML += `<div><b>AI:</b> ${reply}</div>`;
 
-  chat.innerHTML += `<div>AI: ${data.reply}</div>`;
+  document.getElementById("msg").value = "";
   chat.scrollTop = chat.scrollHeight;
 }
 
